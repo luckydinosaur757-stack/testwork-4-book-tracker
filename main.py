@@ -10,10 +10,8 @@ def load_books():
 
 def save_books(books):
     with open('books.json', 'w', encoding='utf-8') as f:
-        json.dump(books, f, ensure_ascii=False, indent=2)
+        json.dump(books, f, ensure_ascii=False, indent=4)
 
-
-        # Здесь будут вызовы функций для каждого пункта меню
 def add_book():
     books = load_books()
     author = input("Автор: ")
@@ -27,29 +25,30 @@ def add_book():
 
     while True:
         try:
-            rating = int(input("Оценка (1-5): "))
+            rating = int(input("Оценка (1–5): "))
             if 1 <= rating <= 5:
                 break
             else:
-                print("Оценка должна быть от 1 до 5")
+                print("Оценка должна быть от 1 до 5.")
         except ValueError:
-            print("Введите число")
+            print("Введите целое число.")
 
     date = input("Дата прочтения (YYYY-MM-DD): ") or datetime.now().strftime("%Y-%m-%d")
 
-    books.append({
+    new_book = {
         'author': author,
         'title': title,
         'rating': rating,
         'date': date
-    })
+    }
+    books.append(new_book)
     save_books(books)
     print("Книга добавлена!")
 
 def show_books():
     books = load_books()
     if not books:
-        print("Список книг пуст")
+        print("Список книг пуст.")
         return
     for i, book in enumerate(books, 1):
         print(f"{i}. {book['title']} — {book['author']} (оценка: {book['rating']}, дата: {book['date']})")
@@ -57,7 +56,7 @@ def show_books():
 def show_average_rating():
     books = load_books()
     if not books:
-        print("Нет данных для расчёта")
+        print("Нет книг для расчёта средней оценки.")
         return
     avg = sum(book['rating'] for book in books) / len(books)
     print(f"Средняя оценка: {avg:.2f}")
@@ -68,12 +67,13 @@ def show_author_stats():
     for book in books:
         author = book['author']
         stats[author] = stats.get(author, 0) + 1
+    print("Статистика по авторам:")
     for author, count in stats.items():
         print(f"{author}: {count} книг")
 
 def delete_book():
     books = load_books()
-    list_books()
+    show_books()
     try:
         index = int(input("Введите номер книги для удаления: ")) - 1
         if 0 <= index < len(books):
@@ -85,34 +85,6 @@ def delete_book():
     except ValueError:
         print("Введите число.")
 
-def list_books():
-    books = load_books()
-    if not books:
-        print("Список книг пуст.")
-        return
-    for i, book in enumerate(books, 1):
-        print(f"{i}. {book['author']} - {book['title']} (Оценка: {book['rating']}, Дата: {book['date']})")
-
-def show_average_rating():
-    books = load_books()
-    if not books:
-        print("Нет книг для расчёта средней оценки.")
-        return
-    total = sum(book['rating'] for book in books)
-    average = total / len(books)
-    print(f"Средняя оценка: {average:.2f}")
-
-def author_stats():
-    books = load_books()
-    stats = {}
-    for book in books:
-        author = book['author']
-        stats[author] = stats.get(author, 0) + 1
-    print("Статистика по авторам:")
-    for author, count in stats.items():
-        print(f"{author}: {count} книг")
-
-
 def main():
     while True:
         print("\n1. Добавить книгу")
@@ -122,11 +94,9 @@ def main():
         print("5. Удалить книгу")
         print("6. Выход")
 
-        choice = input("Выберите действие: ")
+        choice = input("Выберите пункт меню: ")
 
-        if choice == '6':
-            break
-        elif choice == '1':
+        if choice == '1':
             add_book()
         elif choice == '2':
             show_books()
@@ -136,7 +106,10 @@ def main():
             show_author_stats()
         elif choice == '5':
             delete_book()
-
+        elif choice == '6':
+            break
+        else:
+            print("Неверный выбор, попробуйте снова.")
 
 if __name__ == "__main__":
     main()
